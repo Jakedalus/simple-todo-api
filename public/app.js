@@ -8,6 +8,10 @@ $(document).ready(function() {
       createTodo();
     }
   });
+  
+  $('.list').on('click', 'span', function(event) {
+    removeTodo($(this).parent());
+  })
 });
 
 
@@ -34,9 +38,25 @@ function createTodo() {
 }
 
 function addTodo(todo) {
-  var newTodo = $('<li class="task">' + todo.name + '</li>');
+  var newTodo = $('<li class="task">' + todo.name + '<span>X</span>' + '</li>');
+  newTodo.data('id', todo._id);
   if (todo.completed) {
     newTodo.addClass('done');
   }
   $('.list').append(newTodo);
 }
+
+function removeTodo(todo) {
+  var clickedId = todo.data('id');
+  var deleteUrl = '/api/todos/' + clickedId;
+  $.ajax({
+    method: 'DELETE',
+    url: deleteUrl
+  })
+  .done(function(data) {
+    todo.remove();
+  })
+  .fail(handleError);
+}
+
+
